@@ -17,12 +17,12 @@
 #import "AppDelegate+Parse.h"
 
 /** Hyphenate configuration constants **/
-static NSString *const kHyphenateAppKey = @"hyphenate#hyphenatedemo";
+static NSString *const kHyphenateAppKey = @"hyphenatedemo#hyphenatedemo2";
 static NSString *const kHyphenatePushServiceDevelopment = @"DevelopmentCertificate";
 static NSString *const kHyphenatePushServiceProduction = @"ProductionCertificate";
 
 /** Google Analytics configuration constants **/
-static NSString *const kGaPropertyId = @"UA-78628613-1";
+static NSString *const kGaPropertyId = @"updateGoogleAnalyticsKey";
 static NSString *const kTrackingPreferenceKey = @"allowTracking";
 
 @implementation AppDelegate
