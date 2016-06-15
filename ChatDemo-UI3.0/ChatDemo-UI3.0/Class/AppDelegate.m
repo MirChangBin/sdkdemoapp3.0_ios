@@ -34,7 +34,7 @@ static NSString *const kTrackingPreferenceKey = @"allowTracking";
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
 
-    [[UINavigationBar appearance] setBarTintColor:[UIColor HIColorGreenMajor]];
+    [[UINavigationBar appearance] setBarTintColor:[UIColor HIPrimaryColor]];
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"HelveticaNeue" size:21.0], NSFontAttributeName, nil]];
     
