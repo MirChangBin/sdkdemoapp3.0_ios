@@ -60,10 +60,9 @@ static ChatDemoHelper *helper = nil;
 
 - (void)asyncPushOptions
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        EMError *error = nil;
-        [[EMClient sharedClient] getPushOptionsFromServerWithError:&error];
-    });
+    [[EMClient sharedClient] asyncGetPushOptionsFromServer:^(EMPushOptions *aOptions) {
+    } failure:^(EMError *aError) {
+    }];
 }
 
 - (void)asyncConversationFromDB
@@ -229,6 +228,12 @@ static ChatDemoHelper *helper = nil;
     self.conversationListVC = nil;
     self.chatVC = nil;
     
-    [[EMClient sharedClient] logout:NO];
+    [[EMClient sharedClient] asyncLogout:NO success:^{
+        //logout succeed
+    } failure:^(EMError *aError) {
+        //logout failed
+    }];
 }
+
+
 @end

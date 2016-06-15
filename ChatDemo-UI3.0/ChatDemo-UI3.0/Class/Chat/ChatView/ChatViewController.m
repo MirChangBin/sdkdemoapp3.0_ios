@@ -63,9 +63,9 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
             EMError *error = nil;
-            [[EMClient sharedClient].roomManager leaveChatroom:conversationID error:&error];
-            
-            if (error != nil) {
+            [[EMClient sharedClient].roomManager asyncLeaveChatroom:conversationID success:^(EMChatroom *aRoom) {
+                
+            } failure:^(EMError *aError) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     
                     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
@@ -75,7 +75,7 @@
                                                               otherButtonTitles:nil, nil];
                     [alertView show];
                 });
-            }
+            }];
         });
     }
     
