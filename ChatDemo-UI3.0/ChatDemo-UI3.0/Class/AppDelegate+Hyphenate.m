@@ -11,9 +11,7 @@
  */
 
 #import "AppDelegate+Hyphenate.h"
-#import "AppDelegate+HyphenateDebug.h"
 #import "AppDelegate+Parse.h"
-
 #import "LoginViewController.h"
 #import "ChatDemoHelper.h"
 #import "MBProgressHUD.h"
@@ -75,7 +73,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
     BOOL loginSuccess = [notification.object boolValue];
     UINavigationController *navigationController = nil;
     if (loginSuccess) {
-        [[FriendRequestViewController shareController] loadDataSourceFromLocalDB];
         if (self.mainController == nil) {
             self.mainController = [[MainViewController alloc] init];
             navigationController = [[UINavigationController alloc] initWithRootViewController:self.mainController];
@@ -86,7 +83,6 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
         
         [ChatDemoHelper shareHelper].mainVC = self.mainController;
         
-        [[ChatDemoHelper shareHelper] asyncGroupFromServer];
         [[ChatDemoHelper shareHelper] asyncConversationFromDB];
         [[ChatDemoHelper shareHelper] asyncPushOptions];
     }

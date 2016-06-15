@@ -9,15 +9,10 @@
   */
 
 #import "MainViewController.h"
-
-#import "SettingsViewController.h"
-#import "FriendRequestViewController.h"
 #import "ChatViewController.h"
 #import "UserProfileManager.h"
 #import "ConversationListController.h"
-#import "ContactListViewController.h"
 #import "ChatDemoHelper.h"
-#import "AddFriendViewController.h"
 
 static const CGFloat kDefaultPlaySoundInterval = 3.0;
 static NSString *kMessageType = @"MessageType";
@@ -29,8 +24,6 @@ static NSString *kGroupName = @"GroupName";
 @property (strong, nonatomic) UIBarButtonItem *addFriendItem;
 @property (strong, nonatomic) NSDate *lastPlaySoundDate;
 @property (strong, nonatomic) ConversationListController *chatListVC;
-@property (strong, nonatomic) ContactListViewController *contactsVC;
-@property (strong, nonatomic) SettingsViewController *settingsVC;
 
 @end
 
@@ -69,7 +62,6 @@ static NSString *kGroupName = @"GroupName";
     [self setupUnreadMessageCount];
     [self setupUntreatedApplyCount];
     
-    [ChatDemoHelper shareHelper].contactViewVC = self.contactsVC;
     [ChatDemoHelper shareHelper].conversationListVC = self.chatListVC;
 }
 
@@ -96,14 +88,6 @@ static NSString *kGroupName = @"GroupName";
     if (item.tag == 0) {
         self.title = NSLocalizedString(@"title.conversation", @"Chats");
     }
-    else if (item.tag == 1) {
-        self.title = NSLocalizedString(@"title.addressbook", @"Contacts");
-        self.navigationItem.rightBarButtonItem = self.addFriendItem;
-    }
-    else if (item.tag == 2) {
-        self.title = NSLocalizedString(@"title.setting", @"Settings");
-        [self.settingsVC refreshConfig];
-    }
 }
 
 
@@ -122,22 +106,7 @@ static NSString *kGroupName = @"GroupName";
     [self unSelectedTapTabBarItems:self.chatListVC.tabBarItem];
     [self selectedTapTabBarItems:self.chatListVC.tabBarItem];
     
-    // Contacts screen
-    self.contactsVC = [[ContactListViewController alloc] initWithNibName:nil bundle:nil];
-    self.contactsVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Contacts" image:[UIImage imageNamed:@"tabbar_contactsHL"] selectedImage:[UIImage imageNamed:@"tabbar_contacts"]];
-    self.contactsVC.tabBarItem.tag = 1;
-    [self unSelectedTapTabBarItems:self.contactsVC.tabBarItem];
-    [self selectedTapTabBarItems:self.contactsVC.tabBarItem];
-    
-    // Settings Screen
-    self.settingsVC = [[SettingsViewController alloc] init];
-    self.settingsVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Settings" image:[UIImage imageNamed:@"tabbar_settingHL"] selectedImage:[UIImage imageNamed:@"tabbar_setting"]];
-    self.settingsVC.tabBarItem.tag = 2;
-    self.settingsVC.view.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-    [self unSelectedTapTabBarItems:self.settingsVC.tabBarItem];
-    [self selectedTapTabBarItems:self.settingsVC.tabBarItem];
-    
-    self.viewControllers = @[self.chatListVC, self.contactsVC, self.settingsVC];
+    self.viewControllers = @[self.chatListVC];
 }
 
 -(void)unSelectedTapTabBarItems:(UITabBarItem *)tabBarItem
@@ -171,15 +140,6 @@ static NSString *kGroupName = @"GroupName";
 
 - (void)setupUntreatedApplyCount
 {
-    NSInteger unreadCount = [[[FriendRequestViewController shareController] dataSource] count];
-   
-    if (self.contactsVC) {
-        if (unreadCount > 0) {
-            self.contactsVC.tabBarItem.badgeValue = [NSString stringWithFormat:@"%i", (int)unreadCount];
-        }else{
-            self.contactsVC.tabBarItem.badgeValue = nil;
-        }
-    }
 }
 
 - (void)networkChanged:(EMConnectionState)connectionState
@@ -286,9 +246,6 @@ static NSString *kGroupName = @"GroupName";
 
 - (void)addFriendAction
 {
-    AddFriendViewController *addController = [[AddFriendViewController alloc] initWithStyle:UITableViewStylePlain];
-    
-    [self.navigationController pushViewController:addController animated:YES];
 }
 
 #pragma mark - Auto Reconnect

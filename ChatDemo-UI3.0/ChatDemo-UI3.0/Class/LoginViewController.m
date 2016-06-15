@@ -149,7 +149,6 @@
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     [[EMClient sharedClient] dataMigrationTo3];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [[ChatDemoHelper shareHelper] asyncGroupFromServer];
                         [[ChatDemoHelper shareHelper] asyncConversationFromDB];
                         [[ChatDemoHelper shareHelper] asyncPushOptions];
                         [MBProgressHUD hideAllHUDsForView:weakself.view animated:YES];

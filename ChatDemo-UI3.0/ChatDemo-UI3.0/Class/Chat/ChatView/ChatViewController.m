@@ -12,10 +12,7 @@
 
 #import "ChatViewController.h"
 
-#import "ChatGroupDetailViewController.h"
-#import "UserProfileViewController.h"
 #import "UserProfileManager.h"
-#import "ContactListSelectViewController.h"
 #import "ChatDemoHelper.h"
 
 @interface ChatViewController ()<UIAlertViewDelegate, EaseMessageViewControllerDelegate, EaseMessageViewControllerDataSource,EMClientDelegate>
@@ -170,8 +167,6 @@
 - (void)messageViewController:(EaseMessageViewController *)viewController
    didSelectAvatarMessageModel:(id<IMessageModel>)messageModel
 {
-    UserProfileViewController *userprofile = [[UserProfileViewController alloc] initWithUsername:messageModel.message.from];
-    [self.navigationController pushViewController:userprofile animated:YES];
 }
 
 #pragma mark - EaseMessageViewControllerDataSource
@@ -295,10 +290,6 @@
 - (void)showGroupDetailAction
 {
     [self.view endEditing:YES];
-    if (self.conversation.type == EMConversationTypeGroupChat) {
-        ChatGroupDetailViewController *detailController = [[ChatGroupDetailViewController alloc] initWithGroupId:self.conversation.conversationId];
-        [self.navigationController pushViewController:detailController animated:YES];
-    }
 }
 
 - (void)deleteAllMessages:(id)sender
@@ -329,16 +320,6 @@
 
 - (void)transpondMenuAction:(id)sender
 {
-    if (self.menuIndexPath && self.menuIndexPath.row > 0) {
-        
-        id<IMessageModel> model = [self.dataArray objectAtIndex:self.menuIndexPath.row];
-        ContactListSelectViewController *listViewController = [[ContactListSelectViewController alloc] initWithNibName:nil bundle:nil];
-        listViewController.messageModel = model;
-        [listViewController tableViewDidTriggerHeaderRefresh];
-        [self.navigationController pushViewController:listViewController animated:YES];
-    }
-    
-    self.menuIndexPath = nil;
 }
 
 - (void)copyMenuAction:(id)sender

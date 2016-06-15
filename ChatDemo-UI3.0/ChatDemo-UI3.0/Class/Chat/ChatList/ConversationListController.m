@@ -15,19 +15,13 @@
 #import "ChatViewController.h"
 #import "EMSearchBar.h"
 #import "EMSearchDisplayController.h"
-#import "RobotManager.h"
-#import "RobotChatViewController.h"
 #import "UserProfileManager.h"
-#import "RealtimeSearchUtil.h"
 
 @implementation EMConversation (search)
 
 - (NSString*)showName
 {
     if (self.type == EMConversationTypeChat) {
-        if ([[RobotManager sharedInstance] isRobotWithUsername:self.conversationId]) {
-            return [[RobotManager sharedInstance] getRobotNickWithUsername:self.conversationId];
-        }
         return [[UserProfileManager sharedInstance] getNickNameWithUsername:self.conversationId];
     } else if (self.type == EMConversationTypeGroupChat) {
         if ([self.ext objectForKey:@"subject"] || [self.ext objectForKey:@"isPublic"]) {
@@ -185,13 +179,8 @@
             id<IConversationModel> model = [weakSelf.searchController.resultsSource objectAtIndex:indexPath.row];
             EMConversation *conversation = model.conversation;
             ChatViewController *chatController;
-            if ([[RobotManager sharedInstance] isRobotWithUsername:conversation.conversationId]) {
-                chatController = [[RobotChatViewController alloc] initWithConversationChatter:conversation.conversationId conversationType:conversation.type];
-                chatController.title = [[RobotManager sharedInstance] getRobotNickWithUsername:conversation.conversationId];
-            }else {
                 chatController = [[ChatViewController alloc] initWithConversationChatter:conversation.conversationId conversationType:conversation.type];
                 chatController.title = [conversation showName];
-            }
             [weakSelf.navigationController pushViewController:chatController animated:YES];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"setupUnreadMessageCount" object:nil];
             [weakSelf.tableView reloadData];
@@ -210,15 +199,9 @@
     if (conversationModel) {
         EMConversation *conversation = conversationModel.conversation;
         if (conversation) {
-            if ([[RobotManager sharedInstance] isRobotWithUsername:conversation.conversationId]) {
-                RobotChatViewController *chatController = [[RobotChatViewController alloc] initWithConversationChatter:conversation.conversationId conversationType:conversation.type];
-                chatController.title = [[RobotManager sharedInstance] getRobotNickWithUsername:conversation.conversationId];
-                [self.navigationController pushViewController:chatController animated:YES];
-            } else {
                 ChatViewController *chatController = [[ChatViewController alloc] initWithConversationChatter:conversation.conversationId conversationType:conversation.type];
                 chatController.title = conversationModel.title;
                 [self.navigationController pushViewController:chatController animated:YES];
-            }
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:@"setupUnreadMessageCount" object:nil];
         [self.tableView reloadData];
@@ -233,15 +216,11 @@
 {
     EaseConversationModel *model = [[EaseConversationModel alloc] initWithConversation:conversation];
     if (model.conversation.type == EMConversationTypeChat) {
-        if ([[RobotManager sharedInstance] isRobotWithUsername:conversation.conversationId]) {
-            model.title = [[RobotManager sharedInstance] getRobotNickWithUsername:conversation.conversationId];
-        } else {
             UserProfileEntity *profileEntity = [[UserProfileManager sharedInstance] getUserProfileByUsername:conversation.conversationId];
             if (profileEntity) {
                 model.title = profileEntity.nickname == nil ? profileEntity.username : profileEntity.nickname;
                 model.avatarURLPath = profileEntity.imageUrl;
             }
-        }
     } else if (model.conversation.type == EMConversationTypeGroupChat) {
         NSString *imageName = @"group";
         if (![conversation.ext objectForKey:@"subject"])
@@ -328,16 +307,16 @@
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-    __weak typeof(self) weakSelf = self;
-    [[RealtimeSearchUtil currentUtil] realtimeSearchWithSource:self.dataArray searchText:(NSString *)searchText collationStringSelector:@selector(title) resultBlock:^(NSArray *results) {
-        if (results) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf.searchController.resultsSource removeAllObjects];
-                [weakSelf.searchController.resultsSource addObjectsFromArray:results];
-                [weakSelf.searchController.searchResultsTableView reloadData];
-            });
-        }
-    }];
+//    __weak typeof(self) weakSelf = self;
+//    [[RealtimeSearchUtil currentUtil] realtimeSearchWithSource:self.dataArray searchText:(NSString *)searchText collationStringSelector:@selector(title) resultBlock:^(NSArray *results) {
+//        if (results) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [weakSelf.searchController.resultsSource removeAllObjects];
+//                [weakSelf.searchController.resultsSource addObjectsFromArray:results];
+//                [weakSelf.searchController.searchResultsTableView reloadData];
+//            });
+//        }
+//    }];
 }
 
 - (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
@@ -352,10 +331,10 @@
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
 {
-    searchBar.text = @"";
-    [[RealtimeSearchUtil currentUtil] realtimeSearchStop];
-    [searchBar resignFirstResponder];
-    [searchBar setShowsCancelButton:NO animated:YES];
+//    searchBar.text = @"";
+//    [[RealtimeSearchUtil currentUtil] realtimeSearchStop];
+//    [searchBar resignFirstResponder];
+//    [searchBar setShowsCancelButton:NO animated:YES];
 }
 
 
