@@ -11,8 +11,12 @@
  */
 
 #import "AppDelegate.h"
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
+
 #import "MainViewController.h"
 #import "LoginViewController.h"
+
 #import "AppDelegate+Hyphenate.h"
 #import "AppDelegate+Parse.h"
 
@@ -24,6 +28,15 @@ static NSString *const kHyphenatePushServiceProduction = @"ProductionCertificate
 /** Google Analytics configuration constants **/
 static NSString *const kGaPropertyId = @"updateGoogleAnalyticsKey";
 static NSString *const kTrackingPreferenceKey = @"allowTracking";
+static BOOL const kGaDryRun = NO;
+static int const kGaDispatchPeriod = 30;
+
+@interface AppDelegate ()
+
+- (void)initializeGoogleAnalytics;
+
+@end
+
 
 @implementation AppDelegate
 
@@ -33,7 +46,9 @@ static NSString *const kTrackingPreferenceKey = @"allowTracking";
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
+    [self.window makeKeyAndVisible];
 
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     [[UINavigationBar appearance] setBarTintColor:[UIColor HIPrimaryColor]];
     [[UINavigationBar appearance] setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"HelveticaNeue" size:21.0], NSFontAttributeName, nil]];
@@ -55,7 +70,11 @@ static NSString *const kTrackingPreferenceKey = @"allowTracking";
                   apnsCertName:apnsCertName
                    otherConfig:@{kSDKConfigEnableConsoleLogger:[NSNumber numberWithBool:YES]}];
     
-    [self.window makeKeyAndVisible];
+    // Google Analytics
+    [self initializeGoogleAnalytics];
+
+    // Crashlytics
+    [Fabric with:@[[Crashlytics class]]];
     
     return YES;
 }
@@ -87,6 +106,21 @@ static NSString *const kTrackingPreferenceKey = @"allowTracking";
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     [GAI sharedInstance].optOut =
     ![[NSUserDefaults standardUserDefaults] boolForKey:kTrackingPreferenceKey];
+}
+
+
+#pragma mark - Google Analytics
+
+- (void)initializeGoogleAnalytics
+{
+    // Configure tracker from GoogleService-Info.plist.
+    NSError *configureError;
+    [[GGLContext sharedInstance] configureWithError:&configureError];
+    NSAssert(!configureError, @"Error configuring Google services: %@", configureError);
+    
+    [[GAI sharedInstance] setDispatchInterval:kGaDispatchPeriod];
+    [[GAI sharedInstance] setDryRun:kGaDryRun];
+    self.tracker = [[GAI sharedInstance] trackerWithTrackingId:kGaPropertyId];
 }
 
 @end

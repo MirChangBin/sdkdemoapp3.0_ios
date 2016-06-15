@@ -17,6 +17,8 @@
 }
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) id<GAITracker> tracker;
+
 @property (strong, nonatomic) MainViewController *mainController;
 
 @end
